@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Управление движением денежных средств</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
+    <style>
+        .navbar {
+            margin-bottom: 20px;
+        }
+        .container {
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+        .table-responsive {
+            margin-top: 20px;
+        }
+        .filter-form {
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+        }
+        .actions-column {
+            width: 150px;
+        }
+        .summary-box {
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            background-color: #f8f9fa;
+        }
+        .summary-income {
+            color: green;
+        }
+        .summary-expense {
+            color: red;
+        }
+        .summary-balance {
+            color: blue;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'index' %}">Система ДДС</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'index' %}">Главная</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'cash_flow_create' %}">Добавить операцию</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'dictionaries' %}">Справочники</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/admin/">Админ панель</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        {% block content %}
+        {% endblock %}
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Общие JavaScript-функции
+        function loadCategories() {
+            const typeSelect = document.getElementById('id_type');
+            const categorySelect = document.getElementById('id_category');
+            const subcategorySelect = document.getElementById('id_subcategory');
+
+            if (!typeSelect || !categorySelect || !subcategorySelect) {
+                return; // Один из элементов не найден — выходим
+
+
+                // Очистка выпадающего списка
+                categorySelect.innerHTML = '<option value="">Выберите категорию</option>';
+                subcategorySelect.innerHTML = '<option value="">Выберите подкатегорию</option>';
+
+                if (typeId) {
+                    fetch(`/api/categories-by-type/?type_id=${typeId}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            data.forEach(category => {
+                                const option = document.createElement('option');
+                                option.value = category.id;
+                                option.textContent = category.name;
+                                categorySelect.appendChild(option);
+                            });
+                        });
+                }
+            }
+        }
+
+        function loadSubcategories() {
+        const categorySelect = document.getElementById('id_category');
+        const subcategorySelect = document.getElementById('id_subcategory');
+
+        if (categorySelect && subcategorySelect) {
+            const categoryId = categorySelect.value;
+
+            // Очистить выпадающий список подкатегорий
+            subcategorySelect.innerHTML = '<option value="">Выберите подкатегорию</option>';
+
+            if (categoryId) {
+                fetch(`/api/subcategories-by-category/?category_id=${categoryId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        data.forEach(subcategory => {
+                            const option = document.createElement('option');
+                            option.value = subcategory.id;
+                            option.textContent = subcategory.name;
+                            subcategorySelect.appendChild(option);
+                        });
+                    });
+                }
+            }
+        }
+
+            // Инициализация динамических полей при загрузке страницы
+            document.addEventListener('DOMContentLoaded', function() {
+            // Если находимся на странице редактирования, загружаем зависимые списки
+            if (document.getElementById('id_type') && document.getElementById('id_category')) {
+                loadCategories();
+                setTimeout(loadSubcategories, 500); // Небольшая задержка для загрузки категорий
+            }
+        });
+    </script>
+
+{% block extra_js %}{% endblock %}
+</body>
+</html>

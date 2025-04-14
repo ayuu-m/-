@@ -1,0 +1,25 @@
+{% extends 'cash_flow/base.html' %}
+
+{% block content %}
+<!--подтверждение удаления записи-->
+<div class="row">
+    <div class="col-md-6 offset-md-3">
+        <div class="card">
+            <div class="card-header bg-danger text-white">
+                <h3>Подтверждение удаления</h3>
+            </div>
+            <div class="card-body">
+                <p>Вы действительно хотите удалить запись от {{ cash_flow.created_date|date:"d.m.Y" }},
+                   {{ cash_flow.type.name }} ({{ cash_flow.category.name }} - {{ cash_flow.subcategory.name }})
+                   на сумму {{ cash_flow.amount|floatformat:2 }} руб.?</p>
+
+                <form method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">Да, удалить</button>
+                    <a href="{% url 'index' %}" class="btn btn-outline-secondary">Отмена</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

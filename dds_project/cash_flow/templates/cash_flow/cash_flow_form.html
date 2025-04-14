@@ -1,0 +1,83 @@
+{% extends 'cash_flow/base.html' %}
+
+{% block content %}
+<!--Работа с записью-->
+<div class="row">
+    <div class="col-md-8 offset-md-2">
+        <div class="card">
+            <div class="card-header">
+                <h3>{% if cash_flow %}Редактирование записи{% else %}Добавление новой записи{% endif %}</h3>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            {{ form.created_date.label_tag }}
+                            {{ form.created_date }}
+                            {% if form.created_date.errors %}
+                            <div class="text-danger">{{ form.created_date.errors }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            {{ form.status.label_tag }}
+                            {{ form.status }}
+                            {% if form.status.errors %}
+                            <div class="text-danger">{{ form.status.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            {{ form.type.label_tag }}
+                            {{ form.type }}
+                            {% if form.type.errors %}
+                            <div class="text-danger">{{ form.type.errors }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            {{ form.amount.label_tag }}
+                            {{ form.amount }}
+                            {% if form.amount.errors %}
+                            <div class="text-danger">{{ form.amount.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            {{ form.category.label_tag }}
+                            {{ form.category }}
+                            {% if form.category.errors %}
+                            <div class="text-danger">{{ form.category.errors }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            {{ form.subcategory.label_tag }}
+                            {{ form.subcategory }}
+                            {% if form.subcategory.errors %}
+                            <div class="text-danger">{{ form.subcategory.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        {{ form.comment.label_tag }}
+                        {{ form.comment }}
+                        {% if form.comment.errors %}
+                        <div class="text-danger">{{ form.comment.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-3">
+                        <button type="submit" class="btn btn-primary">Сохранить</button>
+                        <a href="{% url 'index' %}" class="btn btn-outline-secondary">Отмена</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
